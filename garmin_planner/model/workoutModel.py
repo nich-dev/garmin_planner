@@ -48,3 +48,5 @@ class WorkoutModel:
     estimatedDurationInSecs: Optional[int]
     estimatedDistanceInMeters: Optional[float]
     estimateType: Optional[str]
+    workoutId: Optional[int]
+    workoutOwner: Optional[int]
