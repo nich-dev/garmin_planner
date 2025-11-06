@@ -43,12 +43,18 @@ class Client(object):
         logger.info(f"""Imported workout {resJson['workoutName']}""")
         return resJson
     
-    def update_workout(self, workoutJson) -> dict:
-        resJson = garth.connectapi(f"""/workout-service/workout/{workoutJson['workoutId']}""",
+    def get_workout(self, workoutId) -> dict:
+        resJson = garth.connectapi(f"""/workout-service/workout/{workoutId}""",
+                               method="GET",
+                               headers={'Content-Type': 'application/json'})
+        return resJson
+    
+    def update_workout(self, workoutId, workoutJson) -> dict:
+        resJson = garth.connectapi(f"""/workout-service/workout/{workoutId}""",
                                method="PUT",
                                headers={'Content-Type': 'application/json'},
                                data=workoutJson)
-        logger.info(f"""Updated workout {resJson['workoutName']}""")
+        logger.info(f"""Updated workout {workoutId}""")
         return resJson
     
     def login(self) -> bool:
