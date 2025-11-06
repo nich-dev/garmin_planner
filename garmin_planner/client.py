@@ -2,7 +2,8 @@ import garth
 from garth.exc import GarthException
 from garmin_planner.__init__ import logger
 
-SESSION_DIR = '.garth'
+SESSION_DIR = ".garth"
+
 
 class Client(object):
     def __init__(self, email, password):
@@ -11,52 +12,75 @@ class Client(object):
 
         if not self.login():
             raise Exception("Login failed")
-     
+
     def getAllWorkouts(self) -> dict:
-        return garth.connectapi(f"""/workout-service/workouts""",
-                                params={"start": 1, "limit": 999, "myWorkoutsOnly": True, "sharedWorkoutsOnly": False, "orderBy": "WORKOUT_NAME", "orderSeq": "ASC", "includeAtp": False})
+        return garth.connectapi(
+            f"""/workout-service/workouts""",
+            params={
+                "start": 1,
+                "limit": 999,
+                "myWorkoutsOnly": True,
+                "sharedWorkoutsOnly": False,
+                "orderBy": "WORKOUT_NAME",
+                "orderSeq": "ASC",
+                "includeAtp": False,
+            },
+        )
 
     def deleteWorkout(self, workout: dict) -> bool:
-        res = garth.connectapi(f"""/workout-service/workout/{workout['workoutId']}""",
-                               method="DELETE")
+        res = garth.connectapi(
+            f"""/workout-service/workout/{workout["workoutId"]}""", method="DELETE"
+        )
         if res != None:
-            logger.info(f"""Deleted workoutId: {workout['workoutId']} workoutName: {workout['workoutName']}""")
+            logger.info(
+                f"""Deleted workoutId: {workout["workoutId"]} workoutName: {workout["workoutName"]}"""
+            )
             return True
         else:
-            logger.warn(f"""Could not delete workout. Workout not found with workoutId: {workout['workoutId']} (workoutName: {workout['workoutName']})""")
+            logger.warn(
+                f"""Could not delete workout. Workout not found with workoutId: {workout["workoutId"]} (workoutName: {workout["workoutName"]})"""
+            )
             return False
 
     def scheduleWorkout(self, id, dateJson: dict) -> bool:
-        resJson = garth.connectapi(f"""/workout-service/schedule/{id}""",
-                               method="POST",
-                               headers={'Content-Type': 'application/json'},
-                               json=dateJson)
-        if ('workoutScheduleId' not in resJson):
+        resJson = garth.connectapi(
+            f"""/workout-service/schedule/{id}""",
+            method="POST",
+            headers={"Content-Type": "application/json"},
+            json=dateJson,
+        )
+        if "workoutScheduleId" not in resJson:
             return False
         return True
 
     def create_workout(self, workoutJson) -> dict:
-        resJson = garth.connectapi(f"""/workout-service/workout""",
-                               method="POST",
-                               headers={'Content-Type': 'application/json'},
-                               data=workoutJson)
-        logger.info(f"""Imported workout {resJson['workoutName']}""")
+        resJson = garth.connectapi(
+            f"""/workout-service/workout""",
+            method="POST",
+            headers={"Content-Type": "application/json"},
+            data=workoutJson,
+        )
+        logger.info(f"""Imported workout {resJson["workoutName"]}""")
         return resJson
-    
+
     def get_workout(self, workoutId) -> dict:
-        resJson = garth.connectapi(f"""/workout-service/workout/{workoutId}""",
-                               method="GET",
-                               headers={'Content-Type': 'application/json'})
+        resJson = garth.connectapi(
+            f"""/workout-service/workout/{workoutId}""",
+            method="GET",
+            headers={"Content-Type": "application/json"},
+        )
         return resJson
-    
+
     def update_workout(self, workoutId, workoutJson) -> dict:
-        resJson = garth.connectapi(f"""/workout-service/workout/{workoutId}""",
-                               method="PUT",
-                               headers={'Content-Type': 'application/json'},
-                               data=workoutJson)
+        resJson = garth.connectapi(
+            f"""/workout-service/workout/{workoutId}""",
+            method="PUT",
+            headers={"Content-Type": "application/json"},
+            data=workoutJson,
+        )
         logger.info(f"""Updated workout {workoutId}""")
         return resJson
-    
+
     def login(self) -> bool:
         try:
             garth.resume(SESSION_DIR)
