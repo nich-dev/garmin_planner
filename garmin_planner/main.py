@@ -68,7 +68,7 @@ def createWorkoutStep(step: dict, stepCount: list):
     return WorkoutStep(stepId=order, stepOrder=order, stepType=stepType, **parsedStepDetailDict)
 
 
-def createWorkoutJson(workoutName: str, steps: list):
+def createWorkoutJson(workoutName: str, steps: list, workout_id=None, workout_owner_id=None):
     stepCount = [0]
     sport_type = SportType.RUNNING
     # distance_unit = DistanceUnit.KILOMETER
@@ -91,26 +91,37 @@ def createWorkoutJson(workoutName: str, steps: list):
         avgTrainingSpeed=None,
         estimatedDurationInSecs=None,
         estimatedDistanceInMeters=None,
-        estimateType=None
+        estimateType=None,
+        workoutId=workout_id,
+        workoutOwner=workout_owner_id
     )
 
     return json.dumps(workout_model, default=serialize)
 
 def importWorkouts(workouts: dict, toDeletePrevious: bool, conn: Client):
-    # delete previous workout with the same workout name
-    allWorkouts = []
-    if toDeletePrevious:
-        allWorkouts = conn.getAllWorkouts() 
+    allWorkouts = conn.getAllWorkouts()
 
     for name in workouts:
-        if toDeletePrevious and (name in [wo['workoutName'] for wo in allWorkouts]):
+        matching_workout = name in [wo['workoutName'] for wo in allWorkouts]
+        if matching_workout and toDeletePrevious:
             filtered = [wo for wo in allWorkouts if wo['workoutName'] == name]
             for toDelete in filtered:
+                logger.debug(f"""Deleting workout on garmin: {name}""")
                 conn.deleteWorkout(toDelete)
-
-        steps = workouts[name]
-        jsonData = createWorkoutJson(name, steps)
-        conn.create_workout(jsonData)
+        elif matching_workout:
+            filtered = [wo for wo in allWorkouts if wo['workoutName'] == name]
+            for to_update in filtered:
+                workout_id = to_update['workoutId']
+                owner_id = to_update['ownerId']
+                steps = workouts[name]
+                jsonData = createWorkoutJson(name, steps, workout_id, owner_id)
+                logger.debug(f"""Updating workout on garmin: {name}""")
+                conn.update_workout(workout_id, jsonData)
+        else:
+            steps = workouts[name]
+            jsonData = createWorkoutJson(name, steps)
+            logger.debug(f"""Creating workout on garmin: {name}""")
+            conn.create_workout(jsonData)
 
 def scheduleWorkouts(startfrom: datetime, workouts: dict, conn: Client):
     # Check valid date
