@@ -35,12 +35,20 @@ class Client(object):
             return False
         return True
 
-    def importWorkout(self, workoutJson) -> dict:
+    def create_workout(self, workoutJson) -> dict:
         resJson = garth.connectapi(f"""/workout-service/workout""",
                                method="POST",
                                headers={'Content-Type': 'application/json'},
                                data=workoutJson)
         logger.info(f"""Imported workout {resJson['workoutName']}""")
+        return resJson
+    
+    def update_workout(self, workoutJson) -> dict:
+        resJson = garth.connectapi(f"""/workout-service/workout/{workoutJson['workoutId']}""",
+                               method="PUT",
+                               headers={'Content-Type': 'application/json'},
+                               data=workoutJson)
+        logger.info(f"""Updated workout {resJson['workoutName']}""")
         return resJson
     
     def login(self) -> bool:

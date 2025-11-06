@@ -110,7 +110,7 @@ def importWorkouts(workouts: dict, toDeletePrevious: bool, conn: Client):
 
         steps = workouts[name]
         jsonData = createWorkoutJson(name, steps)
-        conn.importWorkout(jsonData)
+        conn.create_workout(jsonData)
 
 def scheduleWorkouts(startfrom: datetime, workouts: dict, conn: Client):
     # Check valid date
