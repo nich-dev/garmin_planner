@@ -15,7 +15,7 @@ class Client(object):
 
     def getAllWorkouts(self) -> dict:
         return garth.connectapi(
-            f"""/workout-service/workouts""",
+            """/workout-service/workouts""",
             params={
                 "start": 1,
                 "limit": 999,
@@ -55,7 +55,7 @@ class Client(object):
 
     def create_workout(self, workoutJson) -> dict:
         resJson = garth.connectapi(
-            f"""/workout-service/workout""",
+            """/workout-service/workout""",
             method="POST",
             headers={"Content-Type": "application/json"},
             data=workoutJson,

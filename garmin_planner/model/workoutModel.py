@@ -6,7 +6,7 @@ from garmin_planner.constant import (
     TargetType,
 )
 from dataclasses import dataclass
-from typing import Optional, List, Union
+from typing import Optional, List
 
 
 @dataclass
