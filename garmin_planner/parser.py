@@ -62,6 +62,18 @@ def parse_stepdetail(string):
                     }
                 )
                 continue
+            
+            if "mile" in detail:
+                detail = detail.replace("mile", "")
+                distance_in_miles = int(detail)
+                distance_in_meters = distance_in_miles / 0.000621
+                stepDetails.update(
+                    {
+                        "endCondition": ConditionType.DISTANCE,
+                        "endConditionValue": distance_in_meters,
+                    }
+                )
+                continue
 
             ## Distance
             if "m" in detail:
