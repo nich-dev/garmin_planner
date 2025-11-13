@@ -52,6 +52,21 @@ class Client(object):
         if "workoutScheduleId" not in resJson:
             return False
         return True
+    
+    def delete_scheduled_workout(self, schedule_id) -> bool:
+        res = garth.connectapi(
+            f"""/workout-service/schedule/{schedule_id}""", method="DELETE"
+        )
+        if res != None:
+            logger.info(
+                f"""Deleted scheduled workout: {schedule_id}"""
+            )
+            return True
+        else:
+            logger.warn(
+                f"""Could not delete scheduled workout: {schedule_id}"""
+            )
+            return False
 
     def create_workout(self, workoutJson) -> dict:
         resJson = garth.connectapi(
