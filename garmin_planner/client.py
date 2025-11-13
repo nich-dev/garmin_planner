@@ -31,7 +31,7 @@ class Client(object):
         res = garth.connectapi(
             f"""/workout-service/workout/{workout["workoutId"]}""", method="DELETE"
         )
-        if res != None:
+        if res is not None:
             logger.info(
                 f"""Deleted workoutId: {workout["workoutId"]} workoutName: {workout["workoutName"]}"""
             )
@@ -57,7 +57,7 @@ class Client(object):
         res = garth.connectapi(
             f"""/workout-service/schedule/{schedule_id}""", method="DELETE"
         )
-        if res != None:
+        if res is not None:
             logger.info(
                 f"""Deleted scheduled workout: {schedule_id}"""
             )
